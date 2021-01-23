@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
@@ -29,36 +28,33 @@ class MassageControls extends Component {
     fetch(fetch_url);
   };
 
-  handleForce = (event) => {
-    this.setState({ force: event.target.value });
+  componentDidMount() {
     this.sendState();
+  }
+
+  handleForce = (event) => {
+    this.setState({ force: event.target.value }, () => this.sendState());
   };
   handleSpeed = (event) => {
-    this.setState({ speed: event.target.value });
-    this.sendState();
+    this.setState({ speed: event.target.value }, () => this.sendState());
   };
 
   handleUpper = (event) => {
-    this.setState({ upper: event.target.checked });
-    this.sendState();
+    this.setState({ upper: event.target.checked }, () => this.sendState());
   };
 
   handleMid = (event) => {
-    this.setState({ mid: event.target.checked });
-    this.sendState();
+    this.setState({ mid: event.target.checked }, () => this.sendState());
   };
   handleLower = (event) => {
-    this.setState({ lower: event.target.checked });
-    this.sendState();
+    this.setState({ lower: event.target.checked }, () => this.sendState());
   };
 
   handleStart = () => {
-    this.setState({ running: true });
-    this.sendState();
+    this.setState({ running: true }, () => this.sendState());
   };
   handleStop = () => {
-    this.setState({ running: false });
-    this.sendState();
+    this.setState({ running: false }, () => this.sendState());
   };
 
   render() {
