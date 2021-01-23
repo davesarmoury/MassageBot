@@ -1,0 +1,6 @@
+do_erector: false
+do_lats: false
+do_traps: true
+force_factor: 1.0
+speed_factor: 0.333
+state: true
