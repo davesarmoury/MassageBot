@@ -17,18 +17,23 @@ do_traps = True
 do_lats = True
 do_erector = True
 
-max_force = 100.0
+max_force = 140.0
 max_speed = 1.0
-loop_count = 400
 
-c7_xyz = [-0.345, 0.31, 0.360, 0, 0, 0]
+straight_loop = 300
+turn_loop = 100
 
+c7_xyz = [-0.345, 0.33, 0.360, 0, 0, 0]
 task_frame = [0, 0, 0, 0, 0, 0]
-selection_vector = [0, 1, 0, 0, 0, 0]
-wrench_down = [0, max_force, 0, 0, 0, 0]  # Set force here
-wrench_up = [0, -max_force, 0, 0, 0, 0]  # Set force here
 force_type = 2
-limits = [0.05, max_speed, 0.05, 0.1, 0.1, 0.1]  # Set Speed Here
+
+wrench_down = [0, max_force, 0, 0, 0, 0]  # Set force here
+linear_vector = [0, 1, 0, 0, 0, 0]
+linear_limits = [0.5, max_speed, 0.5, 0.5, 0.5, 0.5]  # Set Speed Here
+
+wrench_twist = [0, max_force, 0, 0, 0, max_force]  # Set force here
+twist_vector = [0, 1, 0, 0, 0, 1]
+twist_limits = [0.5, max_speed, 0.5, 0.5, 0.5, max_speed/3]  # Set Speed Here
 
 traps = []
 traps.append([0.025, 0.050])
@@ -71,16 +76,24 @@ def updateSettings():
 
 def makeMove(rtde_c, point):
     pose = rtde_c.poseTrans(c7_xyz, [point[0], 0.0, point[1], 4.712, 0.0, 0.0])
-    rtde_c.moveL(pose, max_speed * speed_factor, 0.2)
+    rtde_c.moveL(pose, 0.5, 0.1)
 
     dt = 1.0/100
-    for i in range(loop_count):
+    for i in range(straight_loop):
         start = time.time()
 
-        if i < loop_count/2:
-            rtde_c.forceMode(task_frame, selection_vector, [i * force_factor for i in wrench_down], force_type, limits)
-        else:
-            rtde_c.forceMode(task_frame, selection_vector, [i * force_factor for i in wrench_up], force_type, limits)
+        rtde_c.forceMode(task_frame, linear_vector, [i * force_factor for i in wrench_down], force_type, linear_limits)
+
+        end = time.time()
+        duration = end - start
+
+        if duration < dt:
+            time.sleep(dt - duration)
+
+    for i in range(turn_loop):
+        start = time.time()
+
+        rtde_c.forceMode(task_frame, twist_vector, [i * force_factor for i in wrench_twist], force_type, twist_limits)
 
         end = time.time()
         duration = end - start
@@ -89,6 +102,8 @@ def makeMove(rtde_c, point):
             time.sleep(dt - duration)
 
     rtde_c.forceModeStop()
+    rtde_c.moveL(pose, 0.5, 0.1)
+
     updateSettings()
 
 def main():
