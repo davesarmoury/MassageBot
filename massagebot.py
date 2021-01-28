@@ -17,23 +17,23 @@ do_traps = True
 do_lats = True
 do_erector = True
 
-max_force = 140.0
+max_force = 110.0
 max_speed = 1.0
 
 straight_loop = 300
 turn_loop = 100
 
-c7_xyz = [-0.345, 0.33, 0.360, 0, 0, 0]
+c7_xyz = [-0.345, 0.31, 0.360, 0, 0, 0]
 task_frame = [0, 0, 0, 0, 0, 0]
 force_type = 2
 
 wrench_down = [0, max_force, 0, 0, 0, 0]  # Set force here
 linear_vector = [0, 1, 0, 0, 0, 0]
-linear_limits = [0.5, max_speed, 0.5, 0.5, 0.5, 0.5]  # Set Speed Here
+linear_limits = [1.0, max_speed, 1.0, 1.0, 1.0, 1.0]  # Set Speed Here
 
 wrench_twist = [0, max_force, 0, 0, 0, max_force]  # Set force here
 twist_vector = [0, 1, 0, 0, 0, 1]
-twist_limits = [0.5, max_speed, 0.5, 0.5, 0.5, max_speed/3]  # Set Speed Here
+twist_limits = [1.0, max_speed, 1.0, 1.0, 1.0, max_speed/3]  # Set Speed Here
 
 traps = []
 traps.append([0.025, 0.050])
@@ -74,8 +74,12 @@ def updateSettings():
         except:
             pass
 
-def makeMove(rtde_c, point):
-    pose = rtde_c.poseTrans(c7_xyz, [point[0], 0.0, point[1], 4.712, 0.0, 0.0])
+def makeMove(rtde_c, point, flip=False):
+    if not flip:
+        pose = rtde_c.poseTrans(c7_xyz, [point[0], 0.0, point[1], 4.712, 0.0, 0.0])
+    else:
+        pose = rtde_c.poseTrans(c7_xyz, [point[0], 0.0, -point[1], 4.712, 0.0, 0.0])
+
     rtde_c.moveL(pose, 0.5, 0.1)
 
     dt = 1.0/100
@@ -107,7 +111,6 @@ def makeMove(rtde_c, point):
     updateSettings()
 
 def main():
-
     print("Starting Control...")
     rtde_c = rtde_control.RTDEControlInterface("192.168.2.66")
     rtde_c.setTcp([0.0, 0.0, 0.05, 0.0, 0.0, 0.0])
@@ -117,11 +120,15 @@ def main():
         updateSettings()
 
         if state:
-            rtde_c.moveJ([-1.5707, -2.26893, 2.26893, -3.22886, -1.48352986, 0])
+            rtde_c.moveJ([-1.5707, -2.26893, 2.26893, -3.22886, -1.5707, 0])
 
             for p in traps:
                 if do_traps and state:
                     makeMove(rtde_c, p)
+                else:
+                    break
+                if do_traps and state:
+                    makeMove(rtde_c, p, True)
                 else:
                     break
             for p in lats:
@@ -129,14 +136,22 @@ def main():
                     makeMove(rtde_c, p)
                 else:
                     break
+                if do_lats and state:
+                    makeMove(rtde_c, p, True)
+                else:
+                    break
             for p in erects_tehe:
                 if do_erector and state:
                     makeMove(rtde_c, p)
                 else:
                     break
+                if do_erector and state:
+                    makeMove(rtde_c, p, True)
+                else:
+                    break
 
         else:
-            rtde_c.moveJ([-1.5707, -3.14, 0.0, -3.22886, -1.48352986, 0])
+            rtde_c.moveJ([-1.5707, -3.14, 0.0, -3.22886, -1.5707, 0])
 
     print("Done")
     #rtde_c.forceMode(task_frame, selection_vector, wrench, force_type, limits)
