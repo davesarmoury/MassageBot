@@ -11,16 +11,4 @@ Additional collateral from the Massage Bot video with Herman
 - massagebotweb - Contains react web interface
 
 ## License
-    (c) 2021 Dave's Armoury Inc.
-
-    This work ‘as-is’ we provide.
-    No warranty express or implied.
-    We’ve done our best,
-    to debug and test.
-    Liability for damages denied.
-
-    Permission is granted hereby,
-    to copy, share, and modify.
-    Use as is fit,
-    free or for profit.
-    These rights, on this notice, rely.
+<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.
